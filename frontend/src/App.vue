@@ -28,7 +28,7 @@ const nav = [
     en: "ANALYTICS",
   },
   { path: "stations", label: "监测站点", icon: MapPin, en: "STATIONS" },
-  { path: "sources", label: "数据与接入", icon: Database, en: "DATA SOURCES" },
+  { path: "sources", label: "数据接入", icon: Database, en: "INTEGRATION" },
 ];
 </script>
 <template>
@@ -40,7 +40,7 @@ const nav = [
       <a class="brand" href="#/overview"
         ><span class="brand-mark"><Leaf :size="25" /></span
         ><span
-          >青禾<span class="brand-sub">GREENHOUSE OBSERVATORY</span></span
+          >东北旺<span class="brand-sub">WEATHER OBSERVATORY</span></span
         ></a
       >
       <div class="nav-caption">工作空间 <span>WORKSPACE</span></div>
@@ -57,20 +57,20 @@ const nav = [
       </nav>
       <div class="sidebar-footer">
         <div class="mini-leaf"><Leaf :size="30" /></div>
-        <p>让每一份环境数据<br />都有迹可循。</p>
+        <p>田间环境监测<br />气象数据管理。</p>
         <a
-          href="https://github.com/SmartGreenHouses/NUTRICONTROL_datasets"
+          href="https://github.com/zhanglonglong01/weather-station-dashboard/blob/main/docs/SCENARIO.md"
           target="_blank"
           rel="noopener noreferrer"
-          >NUTRICONTROL 开放数据 <ArrowUpRight :size="14" /></a
+          >项目说明 <ArrowUpRight :size="14" /></a
         ><small>SPRING BOOT × VUE 3</small>
       </div>
     </aside>
     <div class="content-shell">
       <header class="topbar">
-        <div class="breadcrumbs">智慧农业 <span>/</span> 气象站可视化系统</div>
+        <div class="breadcrumbs">东北旺试验田 <span>/</span> 气象监测演示</div>
         <div class="topbar-right">
-          <span class="status-dot"></span> 历史数据工作空间
+          <span class="status-dot"></span> 历史样本演示
           <span class="avatar">QH</span>
         </div>
       </header>

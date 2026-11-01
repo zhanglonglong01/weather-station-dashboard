@@ -2,6 +2,8 @@
 
 Base URL：`http://localhost:8080/api/v1`。响应为 JSON；错误为 `application/problem+json`，含 `status` 和中文 `detail`。
 
+前端可使用演示场景别名；API 与 CSV 中的站点代码及来源不受影响，对应关系见 [场景说明](SCENARIO.md)。
+
 ## 读取接口
 
 | 方法与路径 | 参数 | 行为 |

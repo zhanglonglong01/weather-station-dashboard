@@ -19,6 +19,7 @@ import {
   FileText,
 } from "lucide-vue-next";
 import ClimateChart from "../components/ClimateChart.vue";
+import { stationPresentation } from "../presentation";
 import {
   request,
   query,
@@ -52,12 +53,12 @@ const titles: Record<string, [string, string, string]> = {
   ],
   stations: [
     "监测站点",
-    "跨越不同气候区的温室环境记录。",
+    "按演示分区查看气象观测与历史记录。",
     "MONITORING STATIONS",
   ],
   sources: [
-    "数据与接入",
-    "透明的数据来源，清晰的系统边界。",
+    "数据接入",
+    "连接采集端，集中管理气象观测数据。",
     "DATA & INTEGRATION",
   ],
 };
@@ -91,7 +92,7 @@ const latest = computed(() =>
 );
 const sourceLabel = computed(() =>
   latest.value?.source === "nutricontrol"
-    ? "NUTRICONTROL · 历史数据"
+    ? "历史样本演示"
     : latest.value?.source === "demo"
       ? "演示数据"
       : latest.value?.source === "device"
@@ -254,7 +255,7 @@ onBeforeUnmount(() => {
           ><el-option
             v-for="s in stations"
             :key="s.station.code"
-            :label="s.station.name"
+            :label="stationPresentation(s.station).name"
             :value="s.station.code"
         /></el-select>
       </div>
@@ -291,10 +292,14 @@ onBeforeUnmount(() => {
         <div>
           <span class="intro-icon"><Leaf :size="21" /></span
           ><span
-            ><strong>{{ selected?.station.location || "正在读取站点" }}</strong
+            ><strong>{{
+              selected
+                ? stationPresentation(selected.station).location
+                : "正在读取站点"
+            }}</strong
             ><small>{{
               latest?.source === "nutricontrol"
-                ? "保留原始观测时间 · 缺失值不填充 · 每小时抽样"
+                ? "历史样本演示 · 保留原始观测时间 · 缺失值不填充"
                 : "按数据源时间展示 · 缺失值不填充"
             }}</small></span
           >
@@ -383,13 +388,13 @@ onBeforeUnmount(() => {
       </section>
       <section class="bottom-grid">
         <div class="panel explain-card">
-          <div class="section-kicker">DATA PROVENANCE</div>
-          <h2>从原始数据，到清晰的洞察</h2>
+          <div class="section-kicker">FIELD OBSERVATIONS</div>
+          <h2>田间环境，一屏掌握</h2>
           <p>
-            已接入西班牙商业温室公开数据集。本站展示真实历史样本，保留缺失记录与数据来源，可按日追溯、按月分析。
+            集中查看气温、湿度、太阳辐射与风速，按站点追溯历史记录、按月份比较环境变化，为试验田气象数据管理提供统一入口。
           </p>
           <RouterLink to="/sources"
-            >查看数据来源与处理说明 <ArrowUpRight :size="16"
+            >查看数据接入说明 <ArrowUpRight :size="16"
           /></RouterLink>
         </div>
         <div class="panel station-summary">
@@ -404,8 +409,8 @@ onBeforeUnmount(() => {
           >
             <span class="station-pin"><MapPin :size="17" /></span>
             <div>
-              <strong>{{ s.station.name }}</strong
-              ><small>{{ s.station.location }}</small>
+              <strong>{{ stationPresentation(s.station).name }}</strong
+              ><small>{{ stationPresentation(s.station).location }}</small>
             </div>
             <span class="muted-pill">历史归档</span>
           </div>
@@ -449,8 +454,8 @@ onBeforeUnmount(() => {
           ><template #default="scope">{{
             valueText(scope.row[m.key], 2)
           }}</template></el-table-column
-        ><el-table-column prop="source" label="来源" min-width="125"
-      /></el-table>
+        ></el-table
+      >
       <div class="table-footer">
         <span>空值以 — 显示；CSV 保留为空。</span
         ><el-pagination
@@ -531,10 +536,10 @@ onBeforeUnmount(() => {
       ><div class="source-banner">
         <MapPin :size="25" />
         <div>
-          <h2>三个地区，多种温室环境</h2>
-          <p>Álava · Navarra · Cartagena / Spain</p>
+          <h2>试验田气象监测分区</h2>
+          <p>东北旺试验田 · 历史样本演示场景</p>
         </div>
-        <span class="data-badge">NUTRICONTROL</span>
+        <span class="data-badge">示例站点</span>
       </div>
       <section class="station-grid">
         <article
@@ -542,13 +547,15 @@ onBeforeUnmount(() => {
           :key="s.station.code"
           class="panel site-card"
         >
-          <span class="site-code">{{ s.station.code }}</span
+          <span class="site-code">DEMONSTRATION STATION</span
           ><span class="site-illustration"
             ><Leaf :size="38" stroke-width="1"
           /></span>
-          <h2>{{ s.station.name }}</h2>
-          <p>{{ s.station.location }}</p>
-          <div class="site-description">{{ s.station.description }}</div>
+          <h2>{{ stationPresentation(s.station).name }}</h2>
+          <p>{{ stationPresentation(s.station).location }}</p>
+          <div class="site-description">
+            {{ stationPresentation(s.station).description }}
+          </div>
           <div class="site-last">
             <span>最近观测记录</span
             ><strong>{{ timeText(s.lastObservedAt) }}</strong>
@@ -565,53 +572,18 @@ onBeforeUnmount(() => {
           </button>
         </article></section
     ></template>
-    <template v-else-if="view === 'sources'"
-      ><div class="source-banner">
+    <template v-else-if="view === 'sources'">
+      <div class="source-banner">
         <Database :size="26" />
         <div>
-          <h2>NUTRICONTROL 开放数据集</h2>
-          <p>Multi-Site Greenhouse Climate Dataset (Spain)</p>
+          <h2>气象观测数据接入</h2>
+          <p>采集端上报 · 数据存储 · 查询与可视化</p>
         </div>
-        <a
-          href="https://github.com/SmartGreenHouses/NUTRICONTROL_datasets"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="outline-button"
-          >访问原始仓库 <ArrowUpRight :size="15"
-        /></a>
+        <span class="data-badge">接入配置</span>
       </div>
       <section class="source-grid">
         <article class="panel prose">
-          <div class="section-kicker">01 / SOURCE & LICENSE</div>
-          <h2>来源与使用许可</h2>
-          <p>
-            数据由 Jaime Carlavilla-Lázaro、Virginia C. Sánchez、Carlos T.
-            Calafate、Carlos García Sáez、Juan Morales-García、José M. Cecilia
-            发布，许可为 CC BY 4.0。
-          </p>
-          <p>
-            使用三个站点的 clean_data 数据，Navarra 与 Cartagena 选择
-            C0，并按相同时间戳关联室外气象数据。DOI：<a
-              href="https://doi.org/10.5281/zenodo.21037153"
-              target="_blank"
-              rel="noopener noreferrer"
-              >10.5281/zenodo.21037153</a
-            >。
-          </p>
-        </article>
-        <article class="panel prose">
-          <div class="section-kicker">02 / PROCESSING</div>
-          <h2>透明的处理规则</h2>
-          <p>
-            默认样本仅选取每小时整点的原始15分钟记录，保留日期与缺失值，数值四舍五入至两位小数。辐射单位为
-            W/m²，风速为 km/h。
-          </p>
-          <p>
-            不插值、不把空值当成零、不把历史记录改成当天。原始数据未注明时区，因此保留源时间，不进行时区换算。月度统计基于已导入样本，不代表完整原始数据集。
-          </p>
-        </article>
-        <article class="panel prose">
-          <div class="section-kicker">03 / ARCHITECTURE</div>
+          <div class="section-kicker">01 / ARCHITECTURE</div>
           <h2>数据服务架构</h2>
           <div class="architecture-flow">
             <span><Database :size="18" /> MySQL</span><b>→</b
@@ -624,7 +596,7 @@ onBeforeUnmount(() => {
           </p>
         </article>
         <article class="panel prose">
-          <div class="section-kicker">04 / INGESTION API</div>
+          <div class="section-kicker">02 / INGESTION API</div>
           <h2>接入自己的观测数据</h2>
           <p>
             <ShieldCheck :size="15" /> 配置至少32位的 INGEST_API_KEY
@@ -650,7 +622,7 @@ POST /api/v1/observations
       </section></template
     >
     <footer class="page-footer">
-      <span>青禾 · 气象站数据平台</span
+      <span>东北旺试验田 · 气象监测演示</span
       ><span>Spring Boot / MyBatis / MySQL / Vue 3 / ECharts</span
       ><span>数据可追溯，变化看得见。</span>
     </footer>
