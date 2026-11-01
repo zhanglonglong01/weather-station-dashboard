@@ -1,0 +1,38 @@
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+  tomcat:
+    max-http-form-post-size: 1MB
+spring:
+  application:
+    name: weather-station
+  profiles:
+    default: dataset
+  jackson:
+    time-zone: Asia/Shanghai
+  mvc:
+    problemdetails:
+      enabled: true
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    arg-name-based-constructor-auto-mapping: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+weather:
+  dataset:
+    enabled: ${DATASET_SEED_ENABLED:false}
+  demo:
+    enabled: ${DEMO_SEED_ENABLED:false}
+  ingest-key: ${INGEST_API_KEY:}

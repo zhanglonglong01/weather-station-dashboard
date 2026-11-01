@@ -1,0 +1,10 @@
+.git
+.runtime
+**/target
+**/node_modules
+**/dist
+**/coverage
+**/__pycache__
+.env
+data/imports
+*.log

@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+.runtime/
+**/target/
+**/node_modules/
+**/dist/
+**/coverage/
+**/__pycache__/
+*.log
+.idea/
+.vscode/
+.DS_Store
+data/imports/

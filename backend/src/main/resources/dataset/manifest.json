@@ -1,0 +1,82 @@
+{
+  "title": "Multi-Site Greenhouse Climate Dataset (Spain)",
+  "sourceUrl": "https://github.com/SmartGreenHouses/NUTRICONTROL_datasets",
+  "revision": "6dece0d2c7483982610e4d2de225db3c4649b935",
+  "license": "CC-BY-4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "doi": "10.5281/zenodo.21037153",
+  "authors": [
+    "Jaime Carlavilla-Lázaro",
+    "Virginia C. Sánchez",
+    "Carlos T. Calafate",
+    "Carlos García Sáez",
+    "Juan Morales-García",
+    "José M. Cecilia"
+  ],
+  "samplingMinutes": 60,
+  "timezone": "unspecified-in-source; original wall-clock timestamps preserved",
+  "processing": "Exact timestamp left join to site meteorology; select original rows on interval boundary; round to 2 decimal places; missing/non-finite/out-of-range cells remain empty; skip rows with all five metrics empty; no interpolation or time shifting.",
+  "units": {
+    "temperature": "degC",
+    "humidity": "%",
+    "solarRadiation": "W/m2",
+    "outdoorTemperature": "degC",
+    "windSpeed": "km/h"
+  },
+  "totalRows": 77169,
+  "stations": [
+    {
+      "stationCode": "ES-ALAVA",
+      "region": "Alava",
+      "inputRows": 80548,
+      "sampledRows": 19628,
+      "allMissingRowsSkipped": 510,
+      "missingOrRejectedCells": 17214,
+      "firstObservedAt": "2023-11-07T12:00:00",
+      "lastObservedAt": "2026-02-25T08:00:00"
+    },
+    {
+      "stationCode": "ES-NAVARRA",
+      "region": "Navarra",
+      "inputRows": 168668,
+      "sampledRows": 40511,
+      "allMissingRowsSkipped": 1656,
+      "missingOrRejectedCells": 40240,
+      "firstObservedAt": "2021-05-11T16:00:00",
+      "lastObservedAt": "2026-03-03T14:00:00"
+    },
+    {
+      "stationCode": "ES-CARTAGENA",
+      "region": "Cartagena",
+      "inputRows": 69792,
+      "sampledRows": 17030,
+      "allMissingRowsSkipped": 418,
+      "missingOrRejectedCells": 20764,
+      "firstObservedAt": "2024-03-06T18:00:00",
+      "lastObservedAt": "2026-03-03T17:00:00"
+    }
+  ],
+  "files": [
+    {
+      "path": "Alava_data/clean_data/Alava_15min.csv",
+      "sha256": "20873873821550b73b9afe95a364c9ac8c572d325143befcd0885650212e3fbd"
+    },
+    {
+      "path": "Navarra_data/clean_data/Navarra_comp0_15min.csv",
+      "sha256": "6ea4aa27dbf1786ca791688b5d9090aa363fcc5f77b795844931d6e8188a85a8"
+    },
+    {
+      "path": "Navarra_data/clean_data/Navarra_meteo_15min.csv",
+      "sha256": "954b8c95ddf1e8a08f3c823f8c11444a2ca68e7d53f1c47477c01b8b750cf237"
+    },
+    {
+      "path": "Cartagena_data/clean_data/Cartagena_comp0_15min.csv",
+      "sha256": "b68e5b84d79085236719fb9d9536a0ae5b48ce0ffd15ed3d1cb978bcd248c29c"
+    },
+    {
+      "path": "Cartagena_data/clean_data/Cartagena_meteo_15min.csv",
+      "sha256": "8142098490b791d1fa172e6782baf687321d69301d7d134dcdd93cb730695e2e"
+    }
+  ],
+  "sampleSha256": "5a9c3632579a17ea582c3c83a981ce48d7ffc52a527af901cf81cb407e31e4e6"
+}

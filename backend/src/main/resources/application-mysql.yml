@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/weather_station?useUnicode=true&characterEncoding=UTF-8&connectionTimeZone=Asia/Shanghai&forceConnectionTimeZoneToSession=true}
+    username: ${DB_USER:weather}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 10

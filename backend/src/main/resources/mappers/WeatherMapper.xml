@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.greenhouse.weather.WeatherMapper">
+  <sql id="readingColumns">id, station_code, observed_at, temperature, humidity, solar_radiation, outdoor_temperature, wind_speed, source</sql>
+  <sql id="range">station_code = #{code} AND observed_at &gt;= #{from} AND observed_at &lt; #{to}</sql>
+  <!-- No SQL interpolation: metric is selected from a fixed server-side whitelist. -->
+  <sql id="metricColumn"><choose>
+    <when test="metric == 'humidity'">humidity</when>
+    <when test="metric == 'solarRadiation'">solar_radiation</when>
+    <when test="metric == 'outdoorTemperature'">outdoor_temperature</when>
+    <when test="metric == 'windSpeed'">wind_speed</when>
+    <otherwise>temperature</otherwise>
+  </choose></sql>
+  <select id="stations" resultType="io.greenhouse.weather.Models$Station">SELECT code, name, location, description FROM station ORDER BY code</select>
+  <select id="station" resultType="io.greenhouse.weather.Models$Station">SELECT code, name, location, description FROM station WHERE code = #{code}</select>
+  <select id="latest" resultType="io.greenhouse.weather.Models$Reading">SELECT <include refid="readingColumns"/> FROM observation WHERE station_code = #{code} ORDER BY observed_at DESC LIMIT 1</select>
+  <select id="at" resultType="io.greenhouse.weather.Models$Reading">SELECT <include refid="readingColumns"/> FROM observation WHERE station_code = #{code} AND observed_at = #{time} FOR UPDATE</select>
+  <select id="count" resultType="long">SELECT COUNT(*) FROM observation WHERE <include refid="range"/></select>
+  <select id="readings" resultType="io.greenhouse.weather.Models$Reading">SELECT <include refid="readingColumns"/> FROM observation WHERE <include refid="range"/> ORDER BY observed_at DESC LIMIT #{limit} OFFSET #{offset}</select>
+  <select id="summary" resultType="io.greenhouse.weather.Models$Summary">SELECT ROUND(AVG(temperature), 2) AS average, MIN(temperature) AS minimum, MAX(temperature) AS maximum, COUNT(*) AS count FROM observation WHERE <include refid="range"/></select>
+  <select id="trends" resultType="io.greenhouse.weather.Models$Bucket">
+    SELECT EXTRACT(HOUR FROM observed_at) AS bucket_hour, CAST(FLOOR(EXTRACT(MINUTE FROM observed_at) / 15) * 15 AS SIGNED) AS bucket_minute,
+      ROUND(AVG(<include refid="metricColumn"/>), 2) AS `value`, COUNT(<include refid="metricColumn"/>) AS count
+    FROM observation WHERE <include refid="range"/>
+    GROUP BY EXTRACT(HOUR FROM observed_at), CAST(FLOOR(EXTRACT(MINUTE FROM observed_at) / 15) * 15 AS SIGNED)
+    ORDER BY bucket_hour, bucket_minute
+  </select>
+  <select id="monthly" resultType="io.greenhouse.weather.Models$Monthly">
+    SELECT EXTRACT(MONTH FROM observed_at) AS `month`, ROUND(AVG(<include refid="metricColumn"/>), 2) AS average,
+      MIN(<include refid="metricColumn"/>) AS minimum, MAX(<include refid="metricColumn"/>) AS maximum, COUNT(<include refid="metricColumn"/>) AS count
+    FROM observation WHERE <include refid="range"/> GROUP BY EXTRACT(MONTH FROM observed_at) ORDER BY `month`
+  </select>
+  <insert id="insert">
+    INSERT INTO observation(station_code, observed_at, temperature, humidity, solar_radiation, outdoor_temperature, wind_speed, source)
+    VALUES (#{code}, #{r.observedAt}, #{r.temperature}, #{r.humidity}, #{r.solarRadiation}, #{r.outdoorTemperature}, #{r.windSpeed}, #{source})
+    ON DUPLICATE KEY UPDATE id = id
+  </insert>
+</mapper>
